@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ocbcsample/provider/app_theme.dart';
+import 'package:ocbcsample/widgets/beizier_path_painter.dart';
+import 'package:ocbcsample/widgets/xtextfield.dart';
+import 'package:provider/provider.dart';
+
+import 'http/api.dart';
+import 'http/http.dart';
+import 'widgets/gradient_appbar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +33,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Simple'),
     );
   }
 }
@@ -48,68 +57,149 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  double screenWidth = 0;
+  bool isHidden = true;
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController pwdController = TextEditingController();
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+    screenWidth = MediaQuery.of(context).size.width;
+    return WillPopScope(
+      onWillPop: () async {
+        FocusScope.of(context).unfocus();
+        return Future.value(true);
+      },
+      child: Scaffold(
+        appBar: GradientAppBar(
+          leading: GestureDetector(
+            child: const Icon(
+              Icons.close,
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Consumer<AppTheme>(
+                builder: (BuildContext context, AppTheme appTheme, child) {
+                  return CustomPaint(
+                    size: Size(screenWidth, 150),
+                    painter: BezierPathPainter(appTheme.themeColor),
+                  );
+                },
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 20,
+                ),
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                ),
+                child: XTextField(
+                  usernameController,
+                  "Username",
+                  prefixIcon: Icons.person,
+                  obscureText: false,
+                  suffixIcon: Icon(
+                    Icons.close,
+                color: Theme.of(context).textTheme.button!.color,
+                  ),
+                  onChanged: (text) {},
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 20,
+                ),
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                ),
+                child: XTextField(
+                  pwdController,
+                  "Password",
+                  prefixIcon: Icons.lock,
+                  suffixIcon: Icon(
+                    Icons.close,
+                    color: Theme.of(context).textTheme.button!.color,
+                  ),
+                  onChanged: (text) {},
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 30,
+                ),
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Consumer<AppTheme>(
+                        builder: (BuildContext context, AppTheme appTheme, child) {
+                          return MaterialButton(
+                            elevation: 0,
+                            onPressed: () {
+                              login();
+                            },
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                            height: 46,
+                            color: appTheme.themeColor,
+                            child: const Text(
+                              "Login",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void login() async {
+    String username = usernameController.text;
+    String password = pwdController.text;
+    if (username.isEmpty) {
+      Fluttertoast.showToast(msg: "Please input user name");
+      return;
+    }
+    if (password.isEmpty) {
+      Fluttertoast.showToast(msg: "Please input password");
+      return;
+    }
+
+    await HttpClient.getInstance().post(Api.LOGIN, data: {
+      "username": username,
+      "password": password
+    });
+    Fluttertoast.showToast(msg: "login success");
+    Navigator.of(context).pop();
   }
 }
