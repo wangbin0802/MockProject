@@ -1,11 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
+import 'package:ocbcsample/http/api.dart';
+import 'package:ocbcsample/manager/userinfo_manager.dart';
+import 'package:ocbcsample/pages/transfer_page.dart';
 import 'package:ocbcsample/provider/app_theme.dart';
 import 'package:ocbcsample/res/colors.dart';
 import 'package:ocbcsample/utils/theme_util.dart';
 import 'package:ocbcsample/widgets/beizier_path_painter.dart';
 import 'package:ocbcsample/widgets/gradient_appbar.dart';
-import 'package:ocbcsample/widgets/xtextfield.dart';
 import 'package:provider/provider.dart';
 
 class DetailPage extends StatelessWidget {
@@ -30,6 +37,35 @@ class DetailContainer extends StatefulWidget {
 class _DetailContainerState extends State<DetailContainer> {
   double screenWidth = 0;
   String? balance;
+  List<String> litems = ["one", "two", "three"];
+
+  _DetailContainerState() {
+    HttpClient client = HttpClient();
+    client
+        .getUrl(Uri.parse("${Api.BASE_URL}${Api.BALANCE}"))
+        .then((HttpClientRequest request) {
+      // Optionally set up headers...
+      request.headers.add("Accept", "application/json");
+      request.headers.add("Content-Type", "application/json");
+      request.headers.add("Authorization", UserInfoManager.getInstance().getUserToken()!);
+      // Optionally write to the request object...
+      // Then call close.
+      return request.close();
+    }).then((HttpClientResponse response) async {
+      // Process the response.
+      // 通过 utf8 转码，jsonDecode 将数据转成json格式
+      var json = await response.transform(utf8.decoder).join();
+      setState(() {
+        print("result:$json");
+        var result = jsonDecode(json);
+        if (result["status"] == "success") {
+          balance = result["balance"].toString();
+        }
+      });
+    }).catchError((onError) {
+      print(onError.toString());
+    });
+  }
 
   @override
   void initState() {
@@ -92,7 +128,7 @@ class _DetailContainerState extends State<DetailContainer> {
                         left: 20,
                         right: 20,
                       ),
-                      child: Text("$balance",
+                      child: Text("SGD $balance",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold)),
@@ -129,7 +165,28 @@ class _DetailContainerState extends State<DetailContainer> {
               Container(
                 height: 25.0,
               ),
-              Expanded(child: TransactionList())
+              // Expanded(child: TransactionList())
+
+              Container(
+                height: 250,
+                child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Positioned(child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) {
+                          return TransferPage();
+                        }),
+                      );
+                    },
+                    child: Text("Make a transfer",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold)),
+                  ))
+                ],
+              ),)
             ],
           ),
         ),
@@ -147,43 +204,48 @@ class TransactionList extends StatefulWidget {
 
 class _TransactionListState extends State<TransactionList> {
   List<String> litems = ["one", "two", "three"];
+
   @override
   Widget build(BuildContext context) {
     Widget divider1 = Divider(
       color: Colours.darkDialogBackground,
     );
-    return ListView.separated(
-      itemCount: litems.length,
-      //列表项构造器
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-          margin: EdgeInsets.only(
-            left: 40,
-            right: 40,
-          ),
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: 20,
-              ),
-              Text(litems[index],
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black)),
-              Container(
-                width: 60,
-              ),
-              Text(litems[index], style: TextStyle(color: Colors.black)),
-              Text(litems[index],
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black)),
-            ],
-          ),
-        );
-      },
-      //分割器构造器
-      separatorBuilder: (BuildContext context, int index) {
-        return divider1;
-      },
+    return Container(
+      width: double.infinity,
+      height: 100,
+      child: ListView.separated(
+        itemCount: litems.length,
+        //列表项构造器
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            margin: EdgeInsets.only(
+              left: 40,
+              right: 40,
+            ),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 20,
+                ),
+                Text(litems[index],
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black)),
+                Container(
+                  width: 60,
+                ),
+                Text(litems[index], style: TextStyle(color: Colors.black)),
+                Text(litems[index],
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black)),
+              ],
+            ),
+          );
+        },
+        //分割器构造器
+        separatorBuilder: (BuildContext context, int index) {
+          return divider1;
+        },
+      ),
     );
   }
 }
