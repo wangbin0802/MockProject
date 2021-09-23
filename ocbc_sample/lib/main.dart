@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ocbcsample/manager/userinfo_manager.dart';
+import 'package:ocbcsample/pages/detail_page.dart';
 import 'package:ocbcsample/provider/app_theme.dart';
 import 'package:ocbcsample/provider/dark_mode.dart';
 import 'package:ocbcsample/res/colors.dart';
 import 'package:ocbcsample/res/theme_colors.dart';
+import 'package:ocbcsample/utils/theme_util.dart';
 import 'package:ocbcsample/widgets/beizier_path_painter.dart';
 import 'package:ocbcsample/widgets/xtextfield.dart';
 import 'package:provider/provider.dart';
@@ -30,109 +36,6 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: getTheme(Colours.appForeground),
       home: MyHomePage(title: 'Simple'),
-    );
-  }
-
-  getTheme(Color themeColor, {bool isDarkMode = false}) {
-    return ThemeData(
-      // 页面背景颜色
-      scaffoldBackgroundColor:
-      isDarkMode ? Colours.darkAppBackground : Colours.appBackground,
-      accentColor: isDarkMode ? Colours.darkAppSubText : Colours.appSubText,
-      // tab 指示器颜色
-      indicatorColor: Colors.white,
-      backgroundColor:
-      isDarkMode ? Colours.darkAppForeground : Colours.appForeground,
-      // 底部菜单背景颜色
-      bottomAppBarColor:
-      isDarkMode ? Colours.darkAppForeground : Colours.appForeground,
-      primaryColor: Colours.appThemeColor,
-      primaryColorDark: Colours.appBackground,
-//      brightness: isDarkMode ? Brightness.light : Brightness.dark,
-      ///  appBar theme
-      appBarTheme: AppBarTheme(
-        color: Colors.yellow,
-        // 状态栏字体颜色
-        brightness: Brightness.dark,
-        iconTheme: IconThemeData(color: Colors.white),
-        actionsIconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-      ),
-      textTheme: TextTheme(
-        // 一级文本
-        bodyText1: isDarkMode
-            ? TextStyle(
-          color: Colours.darkAppText,
-        )
-            : TextStyle(
-          color: Colours.appText,
-        ),
-//        subtitle: isDarkMode
-//            ? TextStyle(color: Colors.amber)
-//            : TextStyle(color: Colors.cyan),
-        // 二级文本
-        bodyText2: isDarkMode
-            ? TextStyle(
-          color: Colours.darkAppSubText,
-          fontSize: 14,
-        )
-            : TextStyle(
-          color: Colours.appSubText,
-          fontSize: 14,
-        ),
-        caption: isDarkMode
-            ? TextStyle(color: Colours.darkAppActionClip)
-            : TextStyle(color: Colours.appActionClip),
-        button: TextStyle(color: isDarkMode ? Colors.white30 : Colors.black54),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: isDarkMode ? Colours.darkAppDivider : Colours.appDivider,
-            width: 1,
-            style: BorderStyle.solid,
-          ),
-        ),
-        border: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: isDarkMode ? Colours.darkAppDivider : Colours.appDivider,
-            width: 1,
-            style: BorderStyle.solid,
-          ),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: isDarkMode ? Colours.darkAppDivider : Colours.appDivider,
-            width: 1,
-            style: BorderStyle.solid,
-          ),
-        ),
-      ),
-      dialogTheme: DialogTheme(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        backgroundColor:
-        isDarkMode ? Colours.darkDialogBackground : Colors.white,
-        titleTextStyle: TextStyle(
-          color: isDarkMode ? Colours.darkAppText : Colours.appText,
-          fontSize: 20,
-        ),
-        contentTextStyle: TextStyle(
-          color: Colors.yellow,
-        ),
-      ),
-      bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor:
-        isDarkMode ? Colours.darkAppBackground : Colours.appBackground,
-      ),
-      dividerColor: isDarkMode ? Colours.darkAppDivider : Colours.appDivider,
-      cursorColor: Colours.appThemeColor,
-      bottomAppBarTheme: BottomAppBarTheme(
-        color: isDarkMode ? Colours.darkAppForeground : Colours.appForeground,
-      ),
-      toggleButtonsTheme: ToggleButtonsThemeData(color: Colors.yellow),
     );
   }
 }
@@ -169,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
-    Provider.of<AppTheme>(context).updateThemeColor(Colours.appBackground);
+    Provider.of<AppTheme>(context).updateThemeColor(Colours.appThemeColor);
     return WillPopScope(
       onWillPop: () async {
         FocusScope.of(context).unfocus();
@@ -296,10 +199,44 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    await HttpClient.getInstance()
-        .post(Api.LOGIN, data: {"username": username, "password": password});
-    Fluttertoast.showToast(msg: "login success");
-    Navigator.of(context).pop();
+    var data = {"username": username, "password": password};
+    // var result = await HttpClient.getInstance()
+    //     .post(Api.LOGIN, data: {"username": username, "password": password});
+    var result = await get(data);
+    if (result["status"] as String == "success") {
+      Fluttertoast.showToast(msg: "Login success.");
+      var token = result["token"] as String;
+      print(token);
+      UserInfoManager.getInstance().setUserToken(token);
+      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+        return const DetailContainer();
+      }));
+    } else {
+      Fluttertoast.showToast(msg: "Login fail.");
+    }
+  }
+
+  dynamic get(Map data) async {
+    var url = 'http://192.168.1.15:8080/authenticate/login';
+    var httpClient = HttpClient();
+
+    var result;
+    try {
+      var request = await httpClient.postUrl(Uri.parse(url));
+      request.headers.add("Content-Type", "application/json");
+      request.add(utf8.encode(json.encode(data)));
+
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var json = await response.transform(utf8.decoder).join();
+        print(json);
+        result = jsonDecode(json);
+        print(result["token"]);
+      }
+    } catch (exception) {
+      print("error");
+    }
+    return result;
   }
 
   /// 查询主题色

@@ -8,7 +8,7 @@ class HeaderInterceptor extends Interceptor {
     print("onRequest: path = $path");
     print("onRequest: parameters = $parameters");
     print("onRequest: options.headers = ${options.headers}");
-    options.headers.addAll({"developer": "xing"});
+    options.headers.addAll({"Accept": "application/json", "Content-Type": "application/json"});
     return super.onRequest(options);
   }
 }

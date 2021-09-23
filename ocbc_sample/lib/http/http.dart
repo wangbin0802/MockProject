@@ -9,7 +9,7 @@ import 'package:ocbcsample/http/interceptor.dart';
 import 'package:ocbcsample/utils/file_utils.dart';
 
 
-class HttpClient {
+class MyHttpClient {
   static const int ERROR_DIO = 101;
   static const int ERROR_PARSE = 102;
 
@@ -19,7 +19,7 @@ class HttpClient {
   late PersistCookieJar persistCookieJar;
 
   /// 私有构造函数
-  HttpClient._internal() {
+  MyHttpClient._internal() {
     dio = Dio();
     dio.options.baseUrl = Api.BASE_URL;
     dio.options.connectTimeout = 10 * 1000;
@@ -38,11 +38,11 @@ class HttpClient {
   }
 
   /// 保存单例对象
-  static final HttpClient _client = HttpClient._internal();
+  static final MyHttpClient _client = MyHttpClient._internal();
 
-  factory HttpClient() => _client;
+  factory MyHttpClient() => _client;
 
-  static HttpClient getInstance() {
+  static MyHttpClient getInstance() {
     return _client;
   }
 
