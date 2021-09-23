@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ocbcsample/provider/app_theme.dart';
+import 'package:ocbcsample/provider/dark_mode.dart';
+import 'package:ocbcsample/res/theme_colors.dart';
 import 'package:ocbcsample/widgets/beizier_path_painter.dart';
 import 'package:ocbcsample/widgets/xtextfield.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'http/api.dart';
 import 'http/http.dart';
@@ -65,6 +68,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    queryThemeColor().then((index) {
+      Provider.of<AppTheme>(context).updateThemeColor(getThemeColors()[index]);
+    });
+    queryDark().then((value) {
+      Provider.of<DarkMode>(context).setDark(value);
+    });
   }
 
   @override
@@ -201,5 +210,19 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     Fluttertoast.showToast(msg: "login success");
     Navigator.of(context).pop();
+  }
+
+  /// 查询主题色
+  queryThemeColor() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    int themeColorIndex = sp.getInt("themeColorIndex") ?? 0;
+    return themeColorIndex;
+  }
+
+  /// 查询暗黑模式
+  queryDark() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    bool isDark = sp.getBool("dark") ?? false;
+    return isDark;
   }
 }
