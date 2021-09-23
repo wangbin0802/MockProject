@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ocbcsample/provider/app_theme.dart';
 import 'package:ocbcsample/provider/dark_mode.dart';
+import 'package:ocbcsample/res/colors.dart';
 import 'package:ocbcsample/res/theme_colors.dart';
 import 'package:ocbcsample/widgets/beizier_path_painter.dart';
 import 'package:ocbcsample/widgets/xtextfield.dart';
@@ -13,7 +14,10 @@ import 'http/http.dart';
 import 'widgets/gradient_appbar.dart';
 
 void main() {
-  runApp(const MyApp());
+  final appTheme = AppTheme();
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider.value(value: appTheme)],
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -24,19 +28,111 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+      theme: getTheme(Colours.appForeground),
+      home: MyHomePage(title: 'Simple'),
+    );
+  }
+
+  getTheme(Color themeColor, {bool isDarkMode = false}) {
+    return ThemeData(
+      // 页面背景颜色
+      scaffoldBackgroundColor:
+      isDarkMode ? Colours.darkAppBackground : Colours.appBackground,
+      accentColor: isDarkMode ? Colours.darkAppSubText : Colours.appSubText,
+      // tab 指示器颜色
+      indicatorColor: Colors.white,
+      backgroundColor:
+      isDarkMode ? Colours.darkAppForeground : Colours.appForeground,
+      // 底部菜单背景颜色
+      bottomAppBarColor:
+      isDarkMode ? Colours.darkAppForeground : Colours.appForeground,
+      primaryColor: Colours.appThemeColor,
+      primaryColorDark: Colours.appBackground,
+//      brightness: isDarkMode ? Brightness.light : Brightness.dark,
+      ///  appBar theme
+      appBarTheme: AppBarTheme(
+        color: Colors.yellow,
+        // 状态栏字体颜色
+        brightness: Brightness.dark,
+        iconTheme: IconThemeData(color: Colors.white),
+        actionsIconTheme: IconThemeData(
+          color: Colors.white,
+        ),
       ),
-      home: const MyHomePage(title: 'Simple'),
+      textTheme: TextTheme(
+        // 一级文本
+        bodyText1: isDarkMode
+            ? TextStyle(
+          color: Colours.darkAppText,
+        )
+            : TextStyle(
+          color: Colours.appText,
+        ),
+//        subtitle: isDarkMode
+//            ? TextStyle(color: Colors.amber)
+//            : TextStyle(color: Colors.cyan),
+        // 二级文本
+        bodyText2: isDarkMode
+            ? TextStyle(
+          color: Colours.darkAppSubText,
+          fontSize: 14,
+        )
+            : TextStyle(
+          color: Colours.appSubText,
+          fontSize: 14,
+        ),
+        caption: isDarkMode
+            ? TextStyle(color: Colours.darkAppActionClip)
+            : TextStyle(color: Colours.appActionClip),
+        button: TextStyle(color: isDarkMode ? Colors.white30 : Colors.black54),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: isDarkMode ? Colours.darkAppDivider : Colours.appDivider,
+            width: 1,
+            style: BorderStyle.solid,
+          ),
+        ),
+        border: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: isDarkMode ? Colours.darkAppDivider : Colours.appDivider,
+            width: 1,
+            style: BorderStyle.solid,
+          ),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: isDarkMode ? Colours.darkAppDivider : Colours.appDivider,
+            width: 1,
+            style: BorderStyle.solid,
+          ),
+        ),
+      ),
+      dialogTheme: DialogTheme(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        backgroundColor:
+        isDarkMode ? Colours.darkDialogBackground : Colors.white,
+        titleTextStyle: TextStyle(
+          color: isDarkMode ? Colours.darkAppText : Colours.appText,
+          fontSize: 20,
+        ),
+        contentTextStyle: TextStyle(
+          color: Colors.yellow,
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor:
+        isDarkMode ? Colours.darkAppBackground : Colours.appBackground,
+      ),
+      dividerColor: isDarkMode ? Colours.darkAppDivider : Colours.appDivider,
+      cursorColor: Colours.appThemeColor,
+      bottomAppBarTheme: BottomAppBarTheme(
+        color: isDarkMode ? Colours.darkAppForeground : Colours.appForeground,
+      ),
+      toggleButtonsTheme: ToggleButtonsThemeData(color: Colors.yellow),
     );
   }
 }
@@ -68,17 +164,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    queryThemeColor().then((index) {
-      Provider.of<AppTheme>(context).updateThemeColor(getThemeColors()[index]);
-    });
-    queryDark().then((value) {
-      Provider.of<DarkMode>(context).setDark(value);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
+    Provider.of<AppTheme>(context).updateThemeColor(Colours.appBackground);
     return WillPopScope(
       onWillPop: () async {
         FocusScope.of(context).unfocus();
@@ -121,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   obscureText: false,
                   suffixIcon: Icon(
                     Icons.close,
-                color: Theme.of(context).textTheme.button!.color,
+                    color: Theme.of(context).textTheme.button!.color,
                   ),
                   onChanged: (text) {},
                 ),
@@ -158,7 +249,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     Expanded(
                       flex: 1,
                       child: Consumer<AppTheme>(
-                        builder: (BuildContext context, AppTheme appTheme, child) {
+                        builder:
+                            (BuildContext context, AppTheme appTheme, child) {
                           return MaterialButton(
                             elevation: 0,
                             onPressed: () {
@@ -174,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: const Text(
                               "Login",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 16,
                               ),
                             ),
@@ -204,10 +296,8 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    await HttpClient.getInstance().post(Api.LOGIN, data: {
-      "username": username,
-      "password": password
-    });
+    await HttpClient.getInstance()
+        .post(Api.LOGIN, data: {"username": username, "password": password});
     Fluttertoast.showToast(msg: "login success");
     Navigator.of(context).pop();
   }
