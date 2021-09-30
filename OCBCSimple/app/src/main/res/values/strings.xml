@@ -9,4 +9,16 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+
+    <string name="balance_title">You have</string>
+    <string name="in_account_str">in your account</string>
+    <string name="you_activity">Your activity</string>
+    <string name="make_transfer">Make a transfer</string>
+
+    <string name="recipient_str">Recipient</string>
+    <string name="data_str">Date of transfer</string>
+    <string name="description_str">Description</string>
+    <string name="amount_str">Amount</string>
+    <string name="cancel_str">Cancel</string>
+    <string name="submit_str">Submit</string>
 </resources>

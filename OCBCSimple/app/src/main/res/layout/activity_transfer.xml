@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/transferTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/make_transfer"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@android:color/background_dark"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintTop_toBottomOf="@+id/transferTitle">
+
+        <EditText
+            android:id="@+id/recipient"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:hint="@string/recipient_str"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/date"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipient"
+            android:layout_marginTop="12dp"
+            android:hint="@string/data_str"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:hint="@string/description_str"
+            app:layout_constraintTop_toBottomOf="@+id/date"
+            android:layout_marginTop="12dp"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/amount"
+            android:layout_width="match_parent"
+            android:hint="@string/amount_str"
+            app:layout_constraintTop_toBottomOf="@+id/description"
+            android:layout_marginTop="12dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@+id/recipient"
+            app:layout_constraintTop_toTopOf="@+id/recipient"
+            app:layout_constraintBottom_toBottomOf="@+id/recipient"
+            android:src="@android:drawable/arrow_down_float"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@+id/date"
+            app:layout_constraintTop_toTopOf="@+id/date"
+            app:layout_constraintBottom_toBottomOf="@+id/date"
+            android:src="@android:drawable/ic_menu_today"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="15dp"
+            android:text="@string/cancel_str"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/cancel"
+            android:layout_marginStart="100dp"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="15dp"
+            android:text="@string/submit_str"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

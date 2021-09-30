@@ -22,6 +22,6 @@ object SharePrefManager {
     }
 
     fun getString(key: String): String? {
-        return sp.getString(key, null)
+        return sp.getString(key, "")
     }
 }
