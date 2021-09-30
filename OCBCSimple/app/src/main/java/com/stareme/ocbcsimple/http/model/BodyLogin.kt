@@ -1,3 +1,3 @@
 package com.stareme.ocbcsimple.http.model
 
-data class BodyLogin(val name: String)
+data class BodyLogin(val username: String, val password: String)

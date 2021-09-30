@@ -1,15 +1,13 @@
 package com.stareme.ocbcsimple.data
 
 import com.stareme.ocbcsimple.data.model.LoggedInUser
-
-/**
- * Class that requests authentication and user information from the remote data source and
- * maintains an in-memory cache of login status and user credentials information.
- */
+import com.stareme.ocbcsimple.data.storage.SharePrefManager
+import com.stareme.ocbcsimple.http.model.LoginResponse
+import io.reactivex.Observable
+import java.util.*
 
 class LoginRepository(val dataSource: LoginDataSource) {
 
-    // in-memory cache of the loggedInUser object
     var user: LoggedInUser? = null
         private set
 
@@ -17,8 +15,6 @@ class LoginRepository(val dataSource: LoginDataSource) {
         get() = user != null
 
     init {
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
         user = null
     }
 
@@ -27,20 +23,19 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(username: String, password: String): Observable<LoginResponse> {
         // handle login
-        val result = dataSource.login(username, password)
-
-        if (result is Result.Success) {
-            setLoggedInUser(result.data)
+        return dataSource.login(username, password).map {
+            if (it.status == "success") {
+                setLoggedInUser(LoggedInUser(UUID.randomUUID().toString(), username, it.token))
+            }
+            it
         }
-
-        return result
     }
 
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this.user = loggedInUser
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
+        // TODO local storage
+        SharePrefManager.putString(SharePrefManager.USER_TOKEN_KEY, user!!.userToken)
     }
 }

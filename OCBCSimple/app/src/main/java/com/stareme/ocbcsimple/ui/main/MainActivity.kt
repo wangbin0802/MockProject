@@ -1,7 +1,8 @@
-package com.stareme.ocbcsimple
+package com.stareme.ocbcsimple.ui.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.stareme.ocbcsimple.BaseActivity
+import com.stareme.ocbcsimple.R
 
 class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

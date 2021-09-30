@@ -7,7 +7,8 @@ import io.reactivex.schedulers.Schedulers.io
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory.*
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLSession
 
@@ -24,10 +25,15 @@ object RetrofitService {
             .baseUrl("http://192.168.1.15:8080/")
             .client(okHttpClient)
             .addCallAdapterFactory(ObserveOnMainCallAdapterFactory(observeOn))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(io()))
+            .addCallAdapterFactory(createWithScheduler(io()))
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         api = retrofit.create(Api::class.java)
+    }
+
+    fun getApi(): Api {
+        return api
     }
 
     private fun initOkhttp() {
