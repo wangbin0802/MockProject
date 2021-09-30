@@ -2,6 +2,7 @@ package com.stareme.ocbcsimple.http
 
 import com.stareme.ocbcsimple.http.model.*
 import io.reactivex.Observable
+import okhttp3.ResponseBody
 import retrofit2.http.*
 
 interface Api {
@@ -23,5 +24,5 @@ interface Api {
 
     @Headers("Content-Type: application/json", "Accept: application/json")
     @POST("transfer")
-    fun transfer(@Header("Authorization") token: String): Observable<TransferResponse>
+    fun transfer(@Header("Authorization") token: String, @Body body: TransferBody): Observable<TransferResponse>
 }

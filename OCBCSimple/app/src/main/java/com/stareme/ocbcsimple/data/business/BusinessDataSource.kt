@@ -3,6 +3,7 @@ package com.stareme.ocbcsimple.data.business
 import com.stareme.ocbcsimple.http.RetrofitService
 import com.stareme.ocbcsimple.http.model.*
 import io.reactivex.Observable
+import okhttp3.ResponseBody
 
 class BusinessDataSource {
 
@@ -18,7 +19,7 @@ class BusinessDataSource {
         return RetrofitService.getApi().payees(userToken)
     }
 
-    fun postTransfer(userToken: String): Observable<TransferResponse> {
-        return RetrofitService.getApi().transfer(userToken)
+    fun postTransfer(userToken: String, bodyTransfer: TransferBody): Observable<TransferResponse> {
+        return RetrofitService.getApi().transfer(userToken, bodyTransfer)
     }
 }

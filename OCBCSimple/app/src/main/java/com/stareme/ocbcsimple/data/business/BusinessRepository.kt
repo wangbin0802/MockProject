@@ -1,15 +1,15 @@
 package com.stareme.ocbcsimple.data.business
 
 import com.stareme.ocbcsimple.data.storage.SharePrefManager
-import com.stareme.ocbcsimple.http.model.BalanceResponse
-import com.stareme.ocbcsimple.http.model.PayeesResponse
-import com.stareme.ocbcsimple.http.model.TransactionResponse
-import com.stareme.ocbcsimple.http.model.TransferResponse
+import com.stareme.ocbcsimple.http.model.*
 import io.reactivex.Observable
+import okhttp3.ResponseBody
 
 class BusinessRepository(private val dataSource: BusinessDataSource) {
 
-    private var userToken: String = getToken()
+    private val userToken by lazy {
+        getToken()
+    }
 
     fun fetchBalance(): Observable<BalanceResponse> {
         return dataSource.fetchBalance(userToken)
@@ -23,14 +23,11 @@ class BusinessRepository(private val dataSource: BusinessDataSource) {
         return dataSource.fetchPayees(userToken)
     }
 
-    fun postTransfer(): Observable<TransferResponse> {
-        return dataSource.postTransfer(userToken)
+    fun postTransfer(transferBody: TransferBody): Observable<TransferResponse> {
+        return dataSource.postTransfer(userToken, transferBody)
     }
 
     private fun getToken(): String {
-        if (userToken.isEmpty()) {
-            userToken = SharePrefManager.getString(SharePrefManager.USER_TOKEN_KEY)!!
-        }
-        return userToken
+        return SharePrefManager.getString(SharePrefManager.USER_TOKEN_KEY)!!
     }
 }

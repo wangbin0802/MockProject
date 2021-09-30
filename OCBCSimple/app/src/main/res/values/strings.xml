@@ -3,7 +3,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_name">Username</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">login</string>
+    <string name="action_sign_in">Login</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
@@ -21,4 +21,6 @@
     <string name="amount_str">Amount</string>
     <string name="cancel_str">Cancel</string>
     <string name="submit_str">Submit</string>
+
+    <string name="pick_str">Pick a payee</string>
 </resources>

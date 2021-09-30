@@ -2,54 +2,56 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginStart="12dp"
-    android:layout_marginEnd="12dp"
+    android:layout_height="40dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/date"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
             android:text="11111"
             android:textColor="@color/black"
-            android:textSize="14dp"
+            android:ellipsize="end"
             android:textStyle="bold"
-            android:lines="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:lines="1" />
 
         <TextView
             android:id="@+id/text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:text="22222"
             android:textColor="@color/black"
             android:maxLength="60"
-            android:lines="1"
-            app:layout_constraintStart_toEndOf="@+id/date"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginStart="12dp"
+            android:textSize="14dp"
+            android:ellipsize="end"
+            android:lines="1" />
 
         <TextView
             android:id="@+id/money"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:text="33333"
-            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:layout_marginEnd="12dp"
+            android:gravity="end"
+            android:textColor="@android:color/holo_blue_light"
             android:maxLength="20"
-            android:lines="1"
-            app:layout_constraintStart_toEndOf="@+id/text"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:lines="1" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

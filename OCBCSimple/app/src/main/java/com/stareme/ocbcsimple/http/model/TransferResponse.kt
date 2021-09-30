@@ -3,5 +3,8 @@ package com.stareme.ocbcsimple.http.model
 import androidx.annotation.Keep
 
 @Keep
-data class TransferResponse(val recipientAccountNo: String, val amount: Double,
-                            val date: String, val description: String)
+data class TransferResponse(val status: String, val description: String?) {
+    fun success(): Boolean {
+        return status == "success"
+    }
+}

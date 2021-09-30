@@ -57,6 +57,7 @@
             android:layout_height="wrap_content"/>
 
         <ImageView
+            android:id="@+id/payeeIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="@+id/recipient"
@@ -65,6 +66,7 @@
             android:src="@android:drawable/arrow_down_float"/>
 
         <ImageView
+            android:id="@+id/dateIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="@+id/date"
