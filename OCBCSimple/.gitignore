@@ -1,0 +1,33 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+gradle/
+gradlew
+gradlew.bat
+local.properties
+*.iml
+obj/
+
+# Android Studio files
+.gradle/
+.idea/
+
+# Modules
+
+# OS-specific files
+._*
+.DS_Store
+.DS_Store?
