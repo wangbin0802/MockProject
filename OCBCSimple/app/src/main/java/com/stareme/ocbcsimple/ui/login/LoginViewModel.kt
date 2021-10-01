@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
+import androidx.annotation.VisibleForTesting
 import com.stareme.ocbcsimple.data.LoginRepository
 import com.stareme.ocbcsimple.data.Result
 

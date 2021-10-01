@@ -6,7 +6,7 @@ import com.stareme.ocbcsimple.http.model.LoginResponse
 import io.reactivex.Observable
 import java.util.*
 
-class LoginRepository(val dataSource: LoginDataSource) {
+open class LoginRepository(val dataSource: LoginDataSource) {
 
     var user: LoggedInUser? = null
         private set

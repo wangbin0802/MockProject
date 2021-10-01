@@ -10,7 +10,7 @@ import io.reactivex.Observable
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
-class LoginDataSource {
+open class LoginDataSource {
 
 
     fun login(username: String, password: String): Observable<LoginResponse> {
